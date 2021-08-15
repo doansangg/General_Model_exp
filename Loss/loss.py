@@ -166,3 +166,30 @@ def tversky_bce_loss(pred, mask, alpha=0.5, beta=0.5, gamma=2):
     Tversky = (TP + 1) / (TP + alpha * FP + beta * FN + 1)  
 
     return bce + (1 - Tversky) ** gamma
+
+def log_cosh_bce_iou_loss(pred, mask):
+    
+    weit = 1 + 5*torch.abs(F.avg_pool2d(mask, kernel_size=31, stride=1, padding=15) - mask)
+    wbce = F.binary_cross_entropy_with_logits(pred, mask, reduce='none')
+    wbce = (weit*wbce).sum(dim=(2, 3)) / weit.sum(dim=(2, 3))
+
+    pred = torch.sigmoid(pred)
+    inter = ((pred * mask)*weit).sum(dim=(2, 3))
+    union = ((pred + mask)*weit).sum(dim=(2, 3))
+    wiou = 1 - (inter + 1)/(union - inter+1)
+    
+    k=(wbce + wiou).mean()
+    cosh_log= torch.log((torch.exp(k)+torch.exp(-k)).mean()) 
+    return cosh_log
+
+def log_cosh_dice_bce_loss(pred, mask):
+    bce = F.binary_cross_entropy_with_logits(pred, mask, reduction='none')
+    
+    pred = torch.sigmoid(pred)
+    inter = pred * mask
+    union = pred + mask
+    iou = 1 - (2. * inter + 1) / (union + 1)
+
+    k = (bce + iou).mean()
+    cosh_log= torch.log((torch.exp(k)+torch.exp(-k)).mean()) 
+    return cosh_log

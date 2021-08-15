@@ -1,6 +1,7 @@
 ### 1.0 Requirements
   +  torch >= 1.4
   +  config  [gpu_devices = "0,1,2,3"] on file  ..._mutilgpu.py  
+  +  if experiment Loss. Import Loss lod_cosh,... from Loss/loss.py
 ### 2.0. Download data TEST
   + Download data Train [download link (Google Drive)](https://mega.nz/file/LyZyxBzA#z69G9UYJI7eJm3DuJOyEpW2dOEzdus7tUfBnWrlF6Ss)
   + [test](https://mega.nz/file/2vYQxJCb#0JWEj8NKArWoo-63QlU6nCEA_5wFE2dea93YVytEGFY)
